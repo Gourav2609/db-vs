@@ -10,6 +10,7 @@ function App() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [viewOption, setViewOption] = useState("visualize"); // Default option
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     fetchData();
@@ -21,11 +22,14 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/data");
+      setLoading(true); // Set loading to true when starting to fetch data
+      const response = await axios.get("https://db-vs.onrender.com/api/data");
       console.log("response", response);
       setData(response.data);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false); // Set loading to false after data is fetched
     }
   };
 
@@ -36,6 +40,17 @@ function App() {
   const handleViewOptionChange = (option) => {
     setViewOption(option);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#0F1214] text-white">
+        <div className="text-center">
+          <div className="loader"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#0F1214] min-h-screen px-4 text-white flex flex-col">
